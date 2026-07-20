@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Create a Sahaya account." />
+  <title>Create account | Sahaya</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .signup-page{min-height:100vh;display:grid;grid-template-columns:1fr 1.05fr;background:#fff9ef}.signup-art{position:relative;overflow:hidden;background:linear-gradient(145deg,#b9e6d6,#8ecde7);padding:clamp(28px,5vw,72px)}.signup-art h1{max-width:550px;margin-top:clamp(80px,12vh,145px);font-size:clamp(42px,5vw,68px)}.signup-art p{max-width:415px;font-size:18px;line-height:1.7;color:#365e55}.signup-points{margin-top:28px;display:grid;gap:12px;font-weight:800;font-size:15px;color:#28574e}.signup-points span{background:rgba(255,255,255,.55);padding:10px 13px;border-radius:7px;width:max-content}.signup-form-wrap{display:grid;place-items:center;padding:32px}.signup-card{width:min(470px,100%);background:#fff;padding:35px 39px;border-radius:16px;box-shadow:0 15px 40px rgba(45,83,73,.13)}.signup-card .brand{margin-bottom:27px}.signup-card h2{font-size:32px;letter-spacing:-1.7px;margin-bottom:8px}.signup-card>p{font-size:15px;color:#71817a;line-height:1.6;margin-bottom:20px}.signup-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.signup-card label:not(.terms){display:block;font-size:13px;font-weight:800;margin:13px 0 6px}.signup-card input:not([type=checkbox]){width:100%;height:47px;border:1px solid #dce2da;border-radius:7px;padding:0 13px;font:15px Manrope;color:#19332e}.signup-card input:focus{outline:3px solid #6fc1a5;outline-offset:2px}.terms{display:flex;align-items:flex-start;gap:8px;margin:17px 0 21px;font-size:12px;line-height:1.5;color:#61756d}.terms input{margin-top:2px}.terms a{color:#277865;font-weight:800}.signup-card .button{width:100%;font-size:16px}.signup-card footer{border:0;padding:20px 0 0;display:block;text-align:center;font-size:12px;background:transparent}.signup-card footer a{color:#277865}@media(max-width:760px){.signup-page{grid-template-columns:1fr}.signup-art{min-height:300px}.signup-art h1{margin-top:50px;font-size:40px}.signup-form-wrap{padding:22px}.signup-card{padding:28px 23px}.signup-points{display:none}}@media(max-width:390px){.signup-row{grid-template-columns:1fr}}
+    .signup-card select{width:100%;height:47px;border:1px solid #dce2da;border-radius:7px;padding:0 13px;font:15px Manrope;color:#19332e;background:#fff}.signup-card select:focus{outline:3px solid #6fc1a5;outline-offset:2px}
+    .email-confirmation{margin:16px 0 0!important;padding:11px;border-radius:7px;background:#eaf7ef;color:#28745e;font-size:12px!important;font-weight:700}.continue-button{width:100%;margin-top:13px}
+  </style>
+</head>
+<body>
+  <main class="signup-page">
+    <section class="signup-art" aria-labelledby="join-title">
+      <a class="brand" href="login.html"><span class="brand-mark"><i></i><i></i><i></i></span>Sahaya</a>
+      <h1 id="join-title">A city that moves <em>with you.</em></h1>
+      <p>Create your free account and get mobility information shaped around the way you move.</p>
+      <div class="signup-points"><span>✓ Safer wheelchair routes</span><span>✓ Verified mobility updates</span><span>✓ Your preferences, remembered</span></div>
+    </section>
+    <section class="signup-form-wrap" aria-label="Create a Sahaya account">
+      <form class="signup-card" id="signupForm">
+        <a class="brand" href="login.html"><span class="brand-mark"><i></i><i></i><i></i></span>Sahaya</a>
+        <h2>Create your account</h2><p>Start finding wheelchair-friendly journeys today.</p>
+        <div class="signup-row"><div><label for="firstName">First name</label><input id="firstName" autocomplete="given-name" required /></div><div><label for="lastName">Last name</label><input id="lastName" autocomplete="family-name" required /></div></div>
+        <label for="signupEmail">Email address</label><input id="signupEmail" type="email" autocomplete="email" placeholder="you@example.com" required />
+        <label for="signupPassword">Create password</label><input id="signupPassword" type="password" autocomplete="new-password" placeholder="At least 8 characters" minlength="8" required />
+        <label for="mobilityType">Mobility preference</label><select id="mobilityType" required><option value="">Choose your mobility preference</option><option>Manual Wheelchair</option><option>Powered Wheelchair</option><option>Walker</option><option>Crutches</option></select>
+        <label for="emergencyContact">Emergency contact</label><input id="emergencyContact" placeholder="Name and phone number" required />
+        <label class="terms"><input type="checkbox" required /> <span>I agree to Sahaya's <a href="#">terms of use</a> and <a href="#">privacy policy</a>.</span></label>
+        <button class="button dark" type="submit">Create account <span>→</span></button>
+        <p class="email-confirmation" id="emailConfirmation" hidden aria-live="polite"></p>
+        <a class="button dark continue-button" id="continueButton" href="index.html" hidden>Continue to Sahaya <span>→</span></a>
+        <footer>Already have an account? <a href="login.html">Sign in</a></footer>
+      </form>
+    </section>
+  </main>
+  <script>document.getElementById('signupForm').addEventListener('submit', function(event){ event.preventDefault(); const email=document.getElementById('signupEmail').value.trim(); localStorage.setItem('sahayaName', document.getElementById('firstName').value.trim()); localStorage.setItem('sahayaEmail', email); localStorage.setItem('sahayaMobility', document.getElementById('mobilityType').value); localStorage.setItem('sahayaEmergencyContact', document.getElementById('emergencyContact').value.trim()); document.getElementById('emailConfirmation').textContent='✓ Account created. A confirmation email has been sent to '+email+'.'; document.getElementById('emailConfirmation').hidden=false; document.getElementById('continueButton').hidden=false; document.querySelector('.signup-card button[type=submit]').hidden=true; });</script>
+</body>
+</html>
+

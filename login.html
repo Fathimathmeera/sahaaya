@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sign in to Sahaya." />
+  <title>Sign in | Sahaya</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .login-page{min-height:100vh;display:grid;grid-template-columns:1fr 1.05fr;background:#fff9ef}.login-art{position:relative;overflow:hidden;background:linear-gradient(145deg,#f8d169,#f29467);padding:clamp(28px,5vw,72px)}.login-art h1{max-width:560px;margin-top:clamp(90px,14vh,160px);font-size:clamp(42px,5vw,69px)}.login-art p{max-width:390px;font-size:18px;line-height:1.7;color:#435e56}.login-wheel{position:absolute;right:12%;bottom:8%;width:230px;height:230px;border:22px solid #1d5049;border-radius:50%;opacity:.88}.login-wheel:before{content:"";position:absolute;width:66px;height:130px;border-radius:34px 34px 5px 5px;background:#6869b5;left:42px;top:-93px;transform:rotate(-19deg)}.login-wheel:after{content:"";position:absolute;width:52px;height:52px;background:#523830;border-radius:50%;left:85px;top:-134px}.login-form-wrap{display:grid;place-items:center;padding:32px}.login-card{width:min(440px,100%);background:#fff;padding:39px;border-radius:16px;box-shadow:0 15px 40px rgba(74,61,31,.12)}.login-card .brand{margin-bottom:48px}.login-card h2{font-size:34px;letter-spacing:-1.8px;margin-bottom:9px}.login-card>p{font-size:16px;color:#71817a;line-height:1.65;margin-bottom:28px}.login-card label{display:block;font-size:14px;font-weight:800;margin:17px 0 7px}.login-card input{width:100%;height:52px;border:1px solid #dce2da;border-radius:7px;padding:0 14px;font:16px Manrope;color:#19332e}.login-card input:focus{outline:3px solid #6fc1a5;outline-offset:2px}.login-options{display:flex;justify-content:space-between;align-items:center;margin:16px 0 25px;font-size:13px}.login-options label{margin:0;font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px}.login-options input{width:16px;height:16px}.login-options a{color:#277865;font-weight:800;text-decoration:none}.login-card .button{width:100%;font-size:16px}.login-card footer{border:0;padding:23px 0 0;display:block;text-align:center;font-size:12px;background:transparent}.login-card footer a{color:#277865}@media(max-width:760px){.login-page{grid-template-columns:1fr}.login-art{min-height:285px}.login-art h1{margin-top:50px;font-size:42px}.login-wheel{width:130px;height:130px;border-width:13px;right:10%;bottom:-30px}.login-wheel:before{transform:scale(.6) rotate(-19deg);transform-origin:bottom left}.login-wheel:after{transform:scale(.6);transform-origin:bottom left}.login-form-wrap{padding:22px}.login-card{padding:29px 23px}}
+    .text-button{border:0;background:transparent;padding:0;color:#277865;font:800 13px Manrope;cursor:pointer}.auth-divider{display:flex;align-items:center;gap:10px;margin:18px 0;color:#8a9891;font-size:12px}.auth-divider:before,.auth-divider:after{content:"";height:1px;background:#e2e8e1;flex:1}.google-button{width:100%;height:49px;border:1px solid #d5e0d7;border-radius:7px;background:#fff;color:#294b43;font:800 14px Manrope;cursor:pointer}.google-button b{display:inline-grid;place-items:center;margin-right:9px;color:#d85343;font-size:17px}.auth-status{min-height:20px;margin:14px 0 0;color:#277865;font-size:12px;line-height:1.5;font-weight:700}
+  </style>
+</head>
+<body>
+  <main class="login-page">
+    <section class="login-art" aria-labelledby="welcome-title">
+      <a class="brand" href="login.html"><span class="brand-mark"><i></i><i></i><i></i></span>Sahaya</a>
+      <h1 id="welcome-title">Move through your city with <em>confidence.</em></h1>
+      <p>Your mobility accessibility companion is ready to help you find safe, wheelchair-friendly journeys.</p>
+      <div class="login-wheel" aria-hidden="true"></div>
+    </section>
+    <section class="login-form-wrap" aria-label="Sign in to Sahaya">
+      <form class="login-card" id="loginForm">
+        <a class="brand" href="login.html"><span class="brand-mark"><i></i><i></i><i></i></span>Sahaya</a>
+        <h2>Welcome back</h2>
+        <p>Sign in to continue planning barrier-free journeys.</p>
+        <label for="email">Email address</label><input id="email" type="email" placeholder="you@example.com" required />
+        <label for="password">Password</label><input id="password" type="password" placeholder="Enter your password" required />
+        <div class="login-options"><label><input id="rememberMe" type="checkbox" checked /> Remember me</label><button class="text-button" id="forgotPassword" type="button">Forgot password?</button></div>
+        <div class="auth-divider"><span>or</span></div>
+        <button class="google-button" id="googleLogin" type="button"><b>G</b> Continue with Google</button>
+        <p id="authStatus" class="auth-status" role="status" aria-live="polite"></p>
+        <button class="button dark" type="submit">Sign in to Sahaya <span>→</span></button>
+        <footer>New to Sahaya? <a href="signup.html">Create your account</a></footer>
+      </form>
+    </section>
+  </main>
+  <script>
+    const form = document.getElementById('loginForm');
+    const status = document.getElementById('authStatus');
+    const googleButton = document.getElementById('googleLogin');
+    const divider = document.querySelector('.auth-divider');
+    const signInButton = form.querySelector('button[type="submit"]');
+    signInButton.after(divider, googleButton, status);
+    const signIn = (email) => {
+      const rawName = email.split('@')[0].split(/[._-]/)[0];
+      localStorage.setItem('sahayaName', rawName.charAt(0).toUpperCase() + rawName.slice(1));
+      localStorage.setItem('sahayaEmail', email);
+      window.location.href = 'index.html';
+    };
+    form.addEventListener('submit', (event) => { event.preventDefault(); signIn(document.getElementById('email').value.trim()); });
+    googleButton.addEventListener('click', () => { status.textContent = 'Google sign-in is connected in this demo. Continuing as Rahul...'; setTimeout(() => signIn('rahul@gmail.com'), 650); });
+    document.getElementById('forgotPassword').addEventListener('click', () => { const email = document.getElementById('email').value.trim(); status.textContent = email ? `Password-reset instructions have been sent to ${email}.` : 'Enter your email address first, then choose Forgot password.'; });
+  </script>
+</body>
+</html>
