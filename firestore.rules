@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /communityReports/{reportId} {
+      allow read: if true;
+      allow create: if request.auth != null && request.resource.data.authorId == request.auth.token.email && request.resource.data.rating is int && request.resource.data.rating >= 1 && request.resource.data.rating <= 5 && request.resource.data.accessibilityType in ['Ramp', 'Elevator', 'Accessible Toilet', 'Parking'] && request.resource.data.status in ['accessible', 'inaccessible'];
+      allow update, delete: if request.auth != null && resource.data.authorId == request.auth.token.email;
+    }
+    match /accessibilityScans/{scanId} {
+      allow create: if request.auth != null && request.resource.data.authorId == request.auth.token.email;
+      allow read, update, delete: if request.auth != null && resource.data.authorId == request.auth.token.email;
+    }
+    match /profiles/{profileId} {
+      allow create, update: if request.auth != null && request.resource.data.email == request.auth.token.email;
+      allow read, delete: if request.auth != null && resource.data.email == request.auth.token.email;
+    }
+  }
+}

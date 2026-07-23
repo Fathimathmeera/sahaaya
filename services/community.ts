@@ -1,9 +1,5 @@
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { db, storage } from "@/firebase/config";
-export async function submitCommunityReport(input: { placeName: string; review: string; rating: number; image?: File; authorName: string; authorId: string }) {
-  if (!db) throw new Error("Firebase is not configured. Add your Firebase values to .env.local.");
-  let imageUrl: string | undefined;
-  if (input.image) { if (!storage) throw new Error("Firebase Storage is not configured."); const imageRef = ref(storage, `reports/${input.authorId}/${Date.now()}-${input.image.name}`); await uploadBytes(imageRef, input.image); imageUrl = await getDownloadURL(imageRef); }
-  await addDoc(collection(db, "communityReports"), { placeName: input.placeName, review: input.review, rating: input.rating, imageUrl, authorName: input.authorName, authorId: input.authorId, createdAt: serverTimestamp() });
-}
+import{addDoc,collection,serverTimestamp}from"firebase/firestore";
+import{getDownloadURL,ref,uploadBytes}from"firebase/storage";
+import{db,storage}from"@/firebase/config";
+import type{AccessibilityType,ReportStatus}from"@/types";
+export async function submitCommunityReport(input:{placeName:string;comment:string;rating:number;accessibilityType:AccessibilityType;status:ReportStatus;image?:File;authorName:string;authorId:string;latitude?:number;longitude?:number}){if(!db)throw Error("Firebase is not configured. Add Firebase values to .env.local.");let imageUrl:string|undefined;if(input.image){if(!storage)throw Error("Firebase Storage is not configured.");const safe=input.image.name.replace(/[^a-zA-Z0-9._-]/g,"_");const imageRef=ref(storage,"reports/"+encodeURIComponent(input.authorId)+"/"+Date.now()+"-"+safe);await uploadBytes(imageRef,input.image,{contentType:input.image.type});imageUrl=await getDownloadURL(imageRef)}await addDoc(collection(db,"communityReports"),{placeName:input.placeName,comment:input.comment,rating:input.rating,accessibilityType:input.accessibilityType,status:input.status,imageUrl,authorName:input.authorName,authorId:input.authorId,latitude:input.latitude??null,longitude:input.longitude??null,createdAt:serverTimestamp()})}

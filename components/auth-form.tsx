@@ -1,11 +1,75 @@
-﻿"use client";
+"use client";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { FaEye, FaEyeSlash, FaGoogle, FaWheelchair } from "react-icons/fa";
+import { FaSpinner, FaWheelchair } from "react-icons/fa";
 import { useAuth } from "./auth-provider";
+import { firebaseEnabled } from "@/firebase/config";
+
 export function AuthForm({ mode }: { mode: "login" | "register" | "forgot" }) {
- const router=useRouter(), {login}=useAuth(); const [name,setName]=useState(""),[email,setEmail]=useState(""),[password,setPassword]=useState(""),[confirm,setConfirm]=useState(""),[show,setShow]=useState(false),[notice,setNotice]=useState(""); const register=mode==="register", forgot=mode==="forgot";
- const submit=(e:FormEvent)=>{e.preventDefault();setNotice("");if(forgot){setNotice("Demo mode: a reset link would be sent to your email.");return;}if(register&&password!==confirm){setNotice("Passwords do not match.");return;}login({name:register?name.trim():email.split("@")[0]||"Sahaya friend",email});router.push("/dashboard")};
- return <main className="grid min-h-screen bg-gradient-to-br from-brand-50 via-white to-emerald-50 p-4 lg:grid-cols-2"><section className="hidden rounded-[2rem] bg-brand-700 p-12 text-white lg:flex lg:flex-col lg:justify-between"><Link href="/" className="flex items-center gap-3 text-2xl font-bold"><span className="grid h-11 w-11 place-items-center rounded-xl bg-white text-brand-700"><FaWheelchair /></span>Sahaya</Link><div><p className="text-sm font-bold uppercase tracking-[.18em] text-blue-200">Accessibility without barriers</p><h1 className="mt-4 max-w-lg text-5xl font-bold leading-tight">Every journey deserves independence.</h1><p className="mt-6 max-w-md text-lg text-blue-100">AI-powered support for accessible routes, local knowledge, and confident everyday living.</p></div><p className="text-blue-200">Built with wheelchair users at the center.</p></section><section className="mx-auto flex w-full max-w-md flex-col justify-center py-8"><Link href="/" className="mb-10 flex items-center gap-3 text-2xl font-bold text-brand-700 lg:hidden"><FaWheelchair /> Sahaya</Link><div className="rounded-3xl bg-white p-7 shadow-xl ring-1 ring-slate-200 sm:p-9"><h2 className="text-3xl font-bold">{forgot?"Reset your password":register?"Create your Sahaya account":"Welcome Back to Sahaya"}</h2><p className="mt-2 text-slate-600">{forgot?"We’ll help you get back in.":register?"Start your accessible journey today.":"Sign in to your AI Accessibility Companion."}</p><form onSubmit={submit} className="mt-7 space-y-4">{register&&<label className="block text-sm font-semibold">Full Name<input required value={name} onChange={e=>setName(e.target.value)} className="input mt-1.5 w-full rounded-xl border border-slate-300 px-4 py-3" /></label>}<label className="block text-sm font-semibold">Email<input required type="email" value={email} onChange={e=>setEmail(e.target.value)} className="input mt-1.5 w-full rounded-xl border border-slate-300 px-4 py-3" /></label>{!forgot&&<><label className="block text-sm font-semibold">Password<span className="relative mt-1.5 block"><input required minLength={6} type={show?"text":"password"} value={password} onChange={e=>setPassword(e.target.value)} className="input w-full rounded-xl border border-slate-300 px-4 py-3 pr-12"/><button type="button" onClick={()=>setShow(!show)} className="absolute right-3 top-3 text-slate-500" aria-label="Show or hide password">{show?<FaEyeSlash/>:<FaEye/>}</button></span></label>{register&&<label className="block text-sm font-semibold">Confirm Password<input required minLength={6} type="password" value={confirm} onChange={e=>setConfirm(e.target.value)} className="input mt-1.5 w-full rounded-xl border border-slate-300 px-4 py-3" /></label>}{!register&&<div className="flex justify-between text-sm"><label className="flex gap-2"><input type="checkbox" className="accent-brand-700"/>Remember me</label><Link href="/forgot-password" className="font-bold text-brand-700">Forgot Password?</Link></div>}</>}{notice&&<p role="alert" className="rounded-xl bg-amber-50 p-3 text-sm text-amber-800">{notice}</p>}<button className="w-full rounded-xl bg-brand-700 px-4 py-3 font-bold text-white hover:bg-brand-500">{forgot?"Send reset link":register?"Create Account":"Login"}</button></form>{!forgot&&<><div className="my-5 flex items-center gap-3 text-sm text-slate-500 before:h-px before:flex-1 before:bg-slate-200 after:h-px after:flex-1 after:bg-slate-200">or</div><button onClick={()=>{login({name:"Alex",email:"alex@example.com"});router.push("/dashboard")}} className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-300 px-4 py-3 font-semibold hover:bg-slate-50"><FaGoogle className="text-red-500"/> {register?"Sign up with Google":"Continue with Google"}</button></>}<p className="mt-6 text-center text-sm text-slate-600">{register?<>Already have an account? <Link className="font-bold text-brand-700" href="/login">Login</Link></>:forgot?<Link className="font-bold text-brand-700" href="/login">Back to Login</Link>:<>New to Sahaya? <Link className="font-bold text-brand-700" href="/register">Create an account</Link></>}</p></div></section></main>
+  const router = useRouter();
+  const auth = useAuth();
+  const register = mode === "register";
+  const forgot = mode === "forgot";
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [show, setShow] = useState(false);
+  const [notice, setNotice] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  async function submit(event: FormEvent) {
+    event.preventDefault();
+    setNotice("");
+    if (register && password !== confirm) { setNotice("Passwords do not match."); return; }
+    setBusy(true);
+    try {
+      if (forgot) {
+        if (!firebaseEnabled) throw new Error("Firebase is not configured. Password reset is unavailable.");
+        await auth.reset(email);
+        setNotice("Password reset email sent. Check your inbox.");
+        return;
+      }
+      if (firebaseEnabled) {
+        if (register) await auth.signUp(name.trim(), email, password);
+        else await auth.signIn(email, password);
+      } else {
+        auth.login({ name: register ? name.trim() : email.split("@")[0] || "Sahaya user", email });
+      }
+      router.replace("/");
+    } catch (cause) {
+      setNotice(cause instanceof Error ? cause.message : "Authentication failed.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (mode === "login") {
+    return <main className="grid min-h-screen place-items-center bg-slate-50 p-5">
+      <form onSubmit={submit} className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-7 shadow-lg">
+        <label className="block text-sm font-semibold">Email<input required type="email" value={email} onChange={event => setEmail(event.target.value)} className="input mt-2 w-full rounded-xl border border-slate-300 px-4 py-3" autoComplete="email" /></label>
+        <label className="mt-4 block text-sm font-semibold">Password<input required minLength={6} type="password" value={password} onChange={event => setPassword(event.target.value)} className="input mt-2 w-full rounded-xl border border-slate-300 px-4 py-3" autoComplete="current-password" /></label>
+        {notice && <p role="alert" className="mt-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">{notice}</p>}
+        <button disabled={busy} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-brand-700 px-4 py-3 font-bold text-white disabled:opacity-60">{busy && <FaSpinner className="animate-spin" />}Login</button>
+        <div className="mt-5 flex justify-between text-sm"><Link href="/register" className="font-bold text-brand-700">Sign Up</Link><Link href="/forgot-password" className="font-bold text-brand-700">Forgot Password</Link></div>
+      </form>
+    </main>;
+  }
+
+  return <main className="grid min-h-screen place-items-center bg-gradient-to-br from-brand-50 via-white to-emerald-50 p-5">
+    <section className="w-full max-w-md rounded-3xl bg-white p-7 shadow-xl ring-1 ring-slate-200 sm:p-9">
+      <Link href="/" className="flex items-center gap-2 text-2xl font-extrabold text-brand-700"><FaWheelchair />Sahaya</Link>
+      <h1 className="mt-7 text-3xl font-bold">{forgot ? "Reset password" : "Create your account"}</h1>
+      <p className="mt-2 text-slate-600">{forgot ? "Enter your email and we’ll send a reset link." : "Start your accessible journey today."}</p>
+      <form onSubmit={submit} className="mt-7 space-y-4">
+        {!forgot && <label className="block text-sm font-semibold">Full name<input required value={name} onChange={event => setName(event.target.value)} className="input mt-2 w-full rounded-xl border border-slate-300 px-4 py-3" autoComplete="name" /></label>}
+        <label className="block text-sm font-semibold">Email<input required type="email" value={email} onChange={event => setEmail(event.target.value)} className="input mt-2 w-full rounded-xl border border-slate-300 px-4 py-3" autoComplete="email" /></label>
+        {!forgot && <><label className="block text-sm font-semibold">Password<input required minLength={6} type="password" value={password} onChange={event => setPassword(event.target.value)} className="input mt-2 w-full rounded-xl border border-slate-300 px-4 py-3" autoComplete="new-password" /></label><label className="block text-sm font-semibold">Confirm password<input required minLength={6} type="password" value={confirm} onChange={event => setConfirm(event.target.value)} className="input mt-2 w-full rounded-xl border border-slate-300 px-4 py-3" autoComplete="new-password" /></label></>}
+        {notice && <p role="alert" className="rounded-xl bg-amber-50 p-3 text-sm text-amber-900">{notice}</p>}
+        <button disabled={busy} className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-700 px-4 py-3 font-bold text-white disabled:opacity-60">{busy && <FaSpinner className="animate-spin" />}{forgot ? "Send reset link" : "Create account"}</button>
+      </form>
+      <p className="mt-6 text-center text-sm text-slate-600"><Link href="/login" className="font-bold text-brand-700">Back to Login</Link></p>
+    </section>
+  </main>;
 }

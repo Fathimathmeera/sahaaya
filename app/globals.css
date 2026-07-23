@@ -1,13 +1,1 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-:root { color-scheme: light; }
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body { @apply min-h-screen bg-slate-50 text-slate-900 antialiased; }
-button, a, input, select, textarea { @apply focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/30; }
-.dark body { @apply bg-slate-950 text-slate-100; }
-.dark .surface { @apply bg-slate-900 border-slate-800; }
-.dark .muted { @apply text-slate-300; }
-.dark .input { @apply bg-slate-950 border-slate-700 text-white; }
+@tailwind base;@tailwind components;@tailwind utilities;:root{color-scheme:light}*{box-sizing:border-box}html{scroll-behavior:smooth}body{@apply min-h-screen bg-slate-50 text-slate-900 antialiased}button,a,input,select,textarea{@apply focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/30}.dark body{@apply bg-slate-950 text-slate-100}.dark .surface{@apply border-slate-800 bg-slate-900}.dark .muted{@apply text-slate-300}.dark .input{@apply border-slate-700 bg-slate-950 text-white}.leaflet-container{height:100%;min-height:280px;width:100%;border-radius:.75rem;z-index:0}

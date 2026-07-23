@@ -1,17 +1,3 @@
-﻿"use client";
-
-import { createContext, useContext, useEffect, useState } from "react";
-
-type DemoUser = { name: string; email: string };
-type AuthContextValue = { user: DemoUser | null; loading: boolean; login: (user: DemoUser) => void; logout: () => void };
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
-
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<DemoUser | null>(null);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => { const saved = localStorage.getItem("sahaya-user"); if (saved) setUser(JSON.parse(saved) as DemoUser); setLoading(false); }, []);
-  const login = (next: DemoUser) => { localStorage.setItem("sahaya-user", JSON.stringify(next)); setUser(next); };
-  const logout = () => { localStorage.removeItem("sahaya-user"); setUser(null); };
-  return <AuthContext.Provider value={{ user, loading, login, logout }}>{children}</AuthContext.Provider>;
-}
-export function useAuth() { const value = useContext(AuthContext); if (!value) throw new Error("useAuth must be used within AuthProvider"); return value; }
+"use client";
+import{createContext,useContext,useEffect,useState}from"react";import{auth,firebaseEnabled}from"@/firebase/config";import{GoogleAuthProvider,onAuthStateChanged,signInWithEmailAndPassword,signInWithPopup,createUserWithEmailAndPassword,sendPasswordResetEmail,signOut,updateProfile,User}from"firebase/auth";
+type U={name:string;email:string};type C={user:U|null;loading:boolean;login:(u:U)=>void;signIn:(e:string,p:string)=>Promise<void>;signUp:(n:string,e:string,p:string)=>Promise<void>;google:()=>Promise<void>;reset:(e:string)=>Promise<void>;logout:()=>Promise<void>};const A=createContext<C|undefined>(undefined);const toU=(u:User):U=>({name:u.displayName||u.email?.split("@")[0]||"Sahaya member",email:u.email||""});export function AuthProvider({children}:{children:React.ReactNode}){const[user,setUser]=useState<U|null>(null),[loading,setLoading]=useState(true);useEffect(()=>{if(auth)return onAuthStateChanged(auth,u=>{setUser(u?toU(u):null);setLoading(false)});const s=localStorage.getItem("sahaya-user");if(s)setUser(JSON.parse(s)as U);setLoading(false)},[]);const login=(u:U)=>{localStorage.setItem("sahaya-user",JSON.stringify(u));setUser(u)};const need=()=>{if(!auth)throw Error("Firebase is not configured. Add NEXT_PUBLIC_FIREBASE values to .env.local.")};return <A.Provider value={{user,loading,login,signIn:async(e,p)=>{need();await signInWithEmailAndPassword(auth!,e,p)},signUp:async(n,e,p)=>{need();const result=await createUserWithEmailAndPassword(auth!,e,p);await updateProfile(result.user,{displayName:n});setUser({name:n,email:result.user.email||e})},google:async()=>{need();await signInWithPopup(auth!,new GoogleAuthProvider())},reset:async e=>{need();await sendPasswordResetEmail(auth!,e)},logout:async()=>{if(auth)await signOut(auth);else{localStorage.removeItem("sahaya-user");setUser(null)}}}}>{children}</A.Provider>}export function useAuth(){const value=useContext(A);if(!value)throw Error("useAuth must be used within AuthProvider");return value}
