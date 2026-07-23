@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Sahaya
 
 Sahaya is a Next.js 15 accessibility companion for wheelchair users. It combines Firebase, OpenStreetMap/Leaflet, GraphHopper, OpenAI, Twilio, and Google Places through secure server-side integrations.
@@ -60,3 +61,6 @@ Sahaya sends OpenAI requests only from server route handlers. `OPENAI_API_KEY` m
 All endpoints use the Responses API and structured JSON where the UI needs reliable fields. Default `gpt-5-mini` settings keep each normal text call small: roughly 200–1,200 input tokens and 80–350 output tokens. Vision cost depends on image size/detail, so the scanner accepts one image only and is invoked manually. Map rendering, GraphHopper routing, Firebase, location lookup, storage, authentication, and SMS delivery do not call OpenAI.
 
 The browser Web Speech API provides voice capture and read-aloud without sending audio to OpenAI. For production, test Malayalam voices in the target browser/device. Adjust model IDs in `OPENAI_TEXT_MODEL` and `OPENAI_VISION_MODEL`, endpoint instructions, or the scanner image `detail` setting in the corresponding server routes when balancing quality and cost.
+=======
+# sahaaya
+>>>>>>> 20ac8e13e4c5b743d5c52148763be143e6b7d137
